@@ -1,0 +1,66 @@
+body {
+    background-color: #0d0d0d;
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header & Nav */
+header {
+    padding: 60px 20px 40px;
+    text-align: center;
+    border-bottom: 1px solid #222;
+}
+nav { padding: 20px; }
+nav a { color: #888; text-decoration: none; }
+nav a:hover { color: #fff; }
+
+h1 { margin: 0; font-size: 2.5rem; letter-spacing: 3px; }
+.subtitle { color: #888; font-style: italic; margin-top: 10px; }
+
+/* Main Layout */
+main { max-width: 700px; margin: 0 auto; padding: 40px 20px; }
+
+/* Blog Feed (Index) */
+.intro { margin-bottom: 50px; text-align: center; color: #aaa; }
+
+.post-preview {
+    margin-bottom: 50px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 30px;
+}
+.post-preview:last-child { border-bottom: none; }
+.post-preview h2 { margin: 5px 0 15px; }
+.post-preview h2 a { color: #e0e0e0; text-decoration: none; }
+.post-preview h2 a:hover { text-decoration: underline; }
+.date { font-size: 0.8rem; color: #666; display: block; margin-bottom: 5px; }
+.read-more { color: #fff; text-decoration: none; font-weight: bold; font-size: 0.9rem; }
+.read-more:hover { text-decoration: underline; }
+
+/* Full Article Page */
+.full-post { max-width: 700px; margin: 0 auto; padding: 20px; }
+.post-header { margin-bottom: 40px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+.post-header h1 { font-size: 2rem; }
+.meta { color: #666; font-size: 0.9rem; }
+
+h3 { border-bottom: 1px solid #333; padding-bottom: 5px; margin-top: 40px; color: #fff; }
+ul { padding-left: 20px; }
+li { margin-bottom: 15px; }
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #0d0d0d;
+    padding: 15px 30px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 20px;
+    border: 1px solid #e0e0e0;
+    transition: 0.3s;
+}
+.btn:hover { background-color: #000; color: #fff; border-color: #fff; }
+
+footer { text-align: center; padding: 40px; font-size: 0.8rem; color: #444; margin-top: 50px; }

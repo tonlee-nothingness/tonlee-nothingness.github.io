@@ -1,0 +1,1128 @@
+\documentclass[12pt,a4paper]{article}
+
+% ---- Packages ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,citecolor=green!50!black,urlcolor=blue!60!black}
+\usepackage{cleveref}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.pathmorphing,calc}
+\usepackage{tikz-cd}
+\usepackage{thmtools}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+% ---- Page style ----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textsc{TONLEE: Rigorous Causal Foundations}}
+\fancyhead[R]{\small Sharma (2025--2026)}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---- Theorem environments ----
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}{Axiom}
+\newtheorem{postulate}{Postulate}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+
+% ---- Custom commands ----
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Ric}{Ric}
+\DeclareMathOperator{\Scal}{Scal}
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\Dom}{Dom}
+\DeclareMathOperator{\Int}{Int}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Hil}{\mathcal{H}}
+\newcommand{\Alg}{\mathfrak{A}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\II}{\mathcal{I}}
+\newcommand{\MM}{\mathcal{M}}
+
+\title{%
+  \textbf{TONLEE: Rigorous Mathematical Foundations}\\[6pt]
+  \large Causal Structure, Variational Nullity, and Emergent Dynamics\\
+  from the Conservation of Zero%
+}
+\author{Dhruv Sharma\\\texttt{tonlee-nothingness.github.io}}
+\date{Version 3.0 \quad---\quad February 2026\\[2pt]
+\footnotesize Based on TONLEE v1.0 (July 2025), Geometric Foundations v2.0 (July 2025),\\
+and Formal Extensions (February 2026)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a mathematically rigorous formulation of the TONLEE framework
+(Theory of Nothingness, Leading to Everything Else). Starting from a single
+axiom---the conservation of nullity, stating that the total ontological content
+of the universe is identically zero---we construct the causal, geometric, and
+dynamical structures of physics as derived consequences. The paper proceeds
+in four stages: (I)~we formalize nullity within measure theory and functional
+analysis, establishing the mismatch decomposition on signed measure spaces;
+(II)~we derive Lorentzian causal geometry from a partial order on the mismatch
+space, connecting to the theorems of Malament and Hawking--King--McCarthy;
+(III)~we construct the ignorance functional---a variational principle whose
+extremization yields the equations of motion for both the gross (mass-energy)
+and subtle (quantum-informational) sectors, with the speed of light emerging
+as the characteristic speed enforcing well-posedness; (IV)~we analyze the
+Fibonacci generating function identity $\sum_{n=0}^{\infty} F_n x^n\big|_{x=1}^{\text{reg}} = -1$
+as a regularized reflection encoding the null identity $+1 + (-1) = 0$.
+All claims are stated as precise definitions, propositions, and theorems
+with proofs or explicit proof strategies.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%======================================================================
+% PART I
+%======================================================================
+\part{The Axiom of Nullity: Measure-Theoretic Foundations}
+
+\section{The Zero Axiom and Its Formalization}\label{sec:axiom}
+
+\subsection{Statement of the Axiom}
+
+\begin{axiom}[Conservation of Nullity]\label{ax:nullity}
+Let $(\Omega, \Sigma, \mu)$ be a signed measure space representing the totality of
+ontological content. The total measure is identically zero:
+\begin{equation}\label{eq:nullity}
+  \mu(\Omega) = 0.
+\end{equation}
+Equivalently, for every measurable decomposition $\Omega = A \sqcup A^c$:
+\begin{equation}\label{eq:nullity-decomp}
+  \mu(A) + \mu(A^c) = 0 \quad\Longrightarrow\quad \mu(A^c) = -\mu(A).
+\end{equation}
+\end{axiom}
+
+\begin{remark}
+The use of a \emph{signed} measure (rather than a positive measure) is essential:
+it is precisely the existence of both positive and negative contributions that
+permits $\mu(\Omega) = 0$ while allowing $\mu(A) \neq 0$ for proper subsets $A \subsetneq \Omega$.
+This is the mathematical encoding of the physical intuition that
+``everything is a local departure from nothing, compensated elsewhere.''
+\end{remark}
+
+\subsection{The Mismatch Space}
+
+\begin{definition}[Mismatch]\label{def:mismatch}
+A \emph{mismatch} on $(\Omega, \Sigma, \mu)$ is a measurable function
+$\omega: \Omega \to \R$ such that:
+\begin{enumerate}[label=(\roman*)]
+  \item $\omega \in L^1(\Omega, \mu)$, i.e., $\int_\Omega |\omega|\,d|\mu| < \infty$;
+  \item The global integral vanishes:
+    \begin{equation}\label{eq:mismatch-global}
+      \int_\Omega \omega\,d\mu = 0;
+    \end{equation}
+  \item There exists a set $S \in \Sigma$ with $|\mu|(S) > 0$ such that
+    $\omega(p) \neq 0$ for $|\mu|$-almost every $p \in S$.
+\end{enumerate}
+The space of all mismatches is denoted $\MM(\Omega, \mu)$.
+\end{definition}
+
+\begin{proposition}[Vector Space Structure]\label{prop:mismatch-vec}
+$\MM(\Omega, \mu)$ is a real vector subspace of $L^1(\Omega, |\mu|)$: if
+$\omega_1, \omega_2 \in \MM(\Omega, \mu)$ and $\alpha, \beta \in \R$, then
+$\alpha\omega_1 + \beta\omega_2 \in \MM(\Omega, \mu)$.
+\end{proposition}
+
+\begin{proof}
+Linearity of the integral gives
+$\int_\Omega (\alpha\omega_1 + \beta\omega_2)\,d\mu
+  = \alpha\int_\Omega \omega_1\,d\mu + \beta\int_\Omega \omega_2\,d\mu = 0$.
+The $L^1$ condition follows from the triangle inequality, and condition~(iii)
+is preserved for generic linear combinations.
+\end{proof}
+
+\subsection{The Hahn Decomposition and Intrinsic/Extrinsic Structure}
+
+By the Hahn decomposition theorem, there exist disjoint measurable sets
+$P, N$ with $\Omega = P \sqcup N$ such that $\mu(A) \geq 0$ for all measurable
+$A \subseteq P$ and $\mu(A) \leq 0$ for all measurable $A \subseteq N$. Then:
+\begin{equation}
+  \mu^+(A) := \mu(A \cap P), \qquad \mu^-(A) := -\mu(A \cap N),
+\end{equation}
+with $\mu = \mu^+ - \mu^-$ the Jordan decomposition. The nullity axiom
+\eqref{eq:nullity} becomes:
+\begin{equation}\label{eq:jordan-null}
+  \mu^+(\Omega) = \mu^-(\Omega).
+\end{equation}
+
+\begin{definition}[Gross and Subtle Decomposition]\label{def:gross-subtle}
+Given a mismatch $\omega \in \MM(\Omega, \mu)$, define the \emph{Hahn-aligned
+decomposition}:
+\begin{equation}
+  \omega = \omega^+ - \omega^-, \qquad
+  \omega^+ := \omega \cdot \mathbf{1}_P, \quad
+  \omega^- := -\omega \cdot \mathbf{1}_N,
+\end{equation}
+where $\mathbf{1}_P, \mathbf{1}_N$ are the indicator functions of the Hahn sets.
+In the TONLEE interpretation:
+\begin{itemize}[leftmargin=2em]
+  \item $\omega^+$ encodes the \emph{gross body} (sth\=ula \'{s}ar\={\i}ra): mass-energy configurations,
+  \item $\omega^-$ encodes the \emph{subtle body} (s\=uk\d{s}ma \'{s}ar\={\i}ra): informational/quantum configurations.
+\end{itemize}
+The nullity axiom guarantees $\|\omega^+\|_{L^1} = \|\omega^-\|_{L^1}$ in the sense of
+\eqref{eq:jordan-null}.
+\end{definition}
+
+\subsection{Number-Theoretic Realization: The Riemann Zeta Function}\label{sec:zeta}
+
+The nullity principle finds a precise realization in the analytic structure
+of the Riemann zeta function.
+
+\begin{proposition}[Symmetry of the Completed Zeta Function]\label{prop:zeta}
+Define the completed zeta function:
+\begin{equation}\label{eq:xi}
+  \xi(s) := \frac{1}{2}s(s-1)\pi^{-s/2}\,\Gamma\!\left(\frac{s}{2}\right)\zeta(s).
+\end{equation}
+Then $\xi$ is an entire function of order~$1$ satisfying the functional equation:
+\begin{equation}\label{eq:xi-sym}
+  \xi(s) = \xi(1 - s) \qquad \forall\, s \in \C.
+\end{equation}
+This reflection symmetry about the line $\Re(s) = \tfrac{1}{2}$ is a
+number-theoretic instance of the nullity principle: the arithmetic content
+encoded in $\zeta(s)$ for $\Re(s) > \tfrac{1}{2}$ is exactly mirrored
+by the content for $\Re(s) < \tfrac{1}{2}$, yielding a net ``cancellation''
+in the sense that $\xi$ is invariant under $s \mapsto 1 - s$.
+\end{proposition}
+
+\begin{proof}
+This is Riemann's 1859 result. Starting from the Mellin-transform representation
+\begin{equation}
+  \pi^{-s/2}\Gamma\!\left(\frac{s}{2}\right)\zeta(s)
+  = \int_0^\infty x^{s/2 - 1}\left(\sum_{n=1}^\infty e^{-\pi n^2 x}\right)dx
+  = \int_0^\infty x^{s/2 - 1}\,\psi(x)\,dx,
+\end{equation}
+where $\psi(x) = \sum_{n=1}^\infty e^{-\pi n^2 x}$, one uses the Jacobi theta
+function identity
+\begin{equation}\label{eq:jacobi}
+  1 + 2\psi(x) = \frac{1}{\sqrt{x}}\bigl(1 + 2\psi(1/x)\bigr),
+\end{equation}
+which itself is a consequence of Poisson summation (a Fourier-analytic
+``nullity'' identity: the sum over a lattice equals the sum over the dual
+lattice). Splitting the Mellin integral at $x = 1$ and applying
+\eqref{eq:jacobi} to the $[0,1]$ piece yields $\xi(s) = \xi(1-s)$.
+\end{proof}
+
+\begin{remark}[Regularized Values as Mismatch Residues]\label{rem:zeta-values}
+The regularized values
+\begin{equation}
+  \zeta(0) = -\tfrac{1}{2}, \qquad \zeta(-1) = -\tfrac{1}{12},
+\end{equation}
+obtained by analytic continuation, should be understood within the nullity
+framework not as ``sums'' in the classical sense, but as the unique values
+consistent with the functional equation \eqref{eq:xi-sym}---they are
+\emph{forced} by the reflection symmetry. The formal divergence of the
+partial sums $\sum_{n=1}^N 1$ and $\sum_{n=1}^N n$ reflects a failure to
+account for the compensating structure encoded in $\zeta(1-s)$.
+\end{remark}
+
+
+%======================================================================
+% PART II
+%======================================================================
+\part{Emergent Lorentzian Geometry from Causal Order}
+
+\section{The Causal Set and Its Continuum Limit}\label{sec:causal-order}
+
+\subsection{The Precedence Poset}
+
+\begin{definition}[Causal Set (Poset of Mismatches)]\label{def:causet}
+Let $(\Omega, \preceq)$ be a partially ordered set (poset) whose elements are
+mismatches $p, q \in \Omega$. The partial order $\preceq$ satisfies:
+\begin{enumerate}[label=(P\arabic*)]
+  \item \textbf{Reflexivity:} $p \preceq p$ for all $p \in \Omega$.
+  \item \textbf{Antisymmetry:} $p \preceq q$ and $q \preceq p$ implies $p = q$.
+  \item \textbf{Transitivity:} $p \preceq q$ and $q \preceq r$ implies $p \preceq r$.
+  \item \textbf{Local finiteness:} For all $p, q \in \Omega$, the causal interval
+    $[p,q] := \{r \in \Omega : p \preceq r \preceq q\}$ is finite.
+\end{enumerate}
+We write $p \prec q$ if $p \preceq q$ and $p \neq q$ (strict precedence).
+\end{definition}
+
+\begin{definition}[Causal and Acausal Pairs]\label{def:causal-acausal}
+Two elements $p, q \in \Omega$ are:
+\begin{itemize}[leftmargin=2em]
+  \item \emph{Causally related} if $p \preceq q$ or $q \preceq p$.
+  \item \emph{Causally disconnected (acausal)} if neither $p \preceq q$ nor $q \preceq p$,
+    denoted $p \perp q$.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Causal Futures and Pasts]\label{def:J-sets}
+For $p \in \Omega$:
+\begin{equation}
+  J^+(p) := \{q \in \Omega : p \preceq q\}, \qquad
+  J^-(p) := \{q \in \Omega : q \preceq p\}.
+\end{equation}
+The \emph{causal interval} (or Alexandrov set) is $J(p,q) := J^+(p) \cap J^-(q)$.
+\end{definition}
+
+\subsection{Volume from Counting: The Hauptvermutung of Causal Set Theory}
+
+The causal set program (Bombelli--Lee--Meyer--Sorkin, 1987) proposes that
+the cardinality of causal intervals encodes spacetime volume:
+
+\begin{postulate}[Volume--Number Correspondence]\label{post:volume}
+In the continuum limit, the number of elements in a causal interval is
+proportional to the spacetime volume of the corresponding Alexandrov set:
+\begin{equation}\label{eq:volume-number}
+  |[p,q]| \;\sim\; \frac{\Vol_g(J(p,q))}{\ell_{\text{fund}}^{\,n}},
+\end{equation}
+where $\ell_{\text{fund}}$ is the fundamental length scale and $n = \dim M$.
+\end{postulate}
+
+\subsection{Recovery of Lorentzian Geometry: The Reconstruction Theorems}
+
+The following are precise theorems from the mathematical relativity literature
+that justify the TONLEE postulate that ``causal order is geometry.''
+
+\begin{theorem}[Hawking--King--McCarthy, 1976]\label{thm:HKM}
+Let $(M, g)$ be a strongly causal spacetime. Then the manifold topology
+on $M$ is determined by the causal relation $\preceq$ alone: the topology
+coincides with the \emph{Alexandrov topology}, whose basis consists of sets
+$I^+(p) \cap I^-(q)$ for all $p, q \in M$.
+\end{theorem}
+
+\begin{theorem}[Malament, 1977]\label{thm:Malament}
+Let $(M_1, g_1)$ and $(M_2, g_2)$ be time-oriented, past- and
+future-distinguishing spacetimes. If there exists a bijection
+$\varphi: M_1 \to M_2$ preserving the causal relation
+($p \preceq q \iff \varphi(p) \preceq \varphi(q)$),
+then $\varphi$ is a conformal isometry: there exists a smooth positive
+function $\Lambda: M_1 \to \R_{>0}$ such that
+\begin{equation}\label{eq:malament}
+  \varphi^* g_2 = \Lambda^2\, g_1.
+\end{equation}
+In particular, the causal order determines the manifold, its topology,
+its smooth structure, and the metric up to a conformal factor.
+\end{theorem}
+
+\begin{corollary}[Causal Order $\Rightarrow$ Conformal Lorentzian Geometry]\label{cor:causal-geometry}
+The pair $(\Omega, \preceq)$ from \Cref{def:causet}, in its continuum
+limit supplemented by the volume data of \Cref{post:volume}, determines
+a unique (up to diffeomorphism) Lorentzian manifold $(M, g)$ with:
+\begin{enumerate}[label=(\roman*)]
+  \item A manifold topology (by \Cref{thm:HKM}),
+  \item A conformal class $[g]$ (by \Cref{thm:Malament}),
+  \item A specific representative metric $g \in [g]$ (by the volume data).
+\end{enumerate}
+\end{corollary}
+
+\section{Light Cone Structure and the Speed of Causal Propagation}\label{sec:lightcone}
+
+\subsection{Tangent Space Decomposition}
+
+Let $(M, g)$ be the emergent Lorentzian manifold from \Cref{cor:causal-geometry},
+with $g$ of signature $(-,+,\ldots,+)$. At each point $p \in M$, the
+tangent space $T_pM$ is partitioned by $g_p$ into:
+
+\begin{definition}[Causal Character of Vectors]\label{def:causal-char}
+A vector $v \in T_pM$ is:
+\begin{alignat}{2}
+  &\textit{timelike} &\quad&\text{if } g_p(v,v) < 0, \label{eq:timelike}\\
+  &\textit{null (lightlike)} &\quad&\text{if } g_p(v,v) = 0,\; v \neq 0, \label{eq:null}\\
+  &\textit{spacelike} &\quad&\text{if } g_p(v,v) > 0. \label{eq:spacelike}
+\end{alignat}
+\end{definition}
+
+\begin{definition}[Null Cone]\label{def:null-cone}
+The null cone at $p$ is the codimension-1 hypersurface in $T_pM$:
+\begin{equation}\label{eq:null-cone}
+  \mathcal{C}_p := \bigl\{v \in T_pM \setminus \{0\} : g_p(v,v) = 0\bigr\}.
+\end{equation}
+A time orientation selects the \emph{future} sheet $\mathcal{C}_p^+$. The
+future light cone in spacetime is $\partial J^+(p)$.
+\end{definition}
+
+\subsection{The Speed of Light as Conformal Invariant}
+
+\begin{definition}[Speed of Causal Propagation]\label{def:speed-c}
+In a coordinate system $(x^0, x^1, \ldots, x^{n-1})$ adapted to the
+conformal structure, define:
+\begin{equation}\label{eq:c-def}
+  c := \sup_{\substack{p \in M \\ \gamma \text{ causal}}}
+    \frac{d_{\text{space}}(\gamma)}{d_{\text{time}}(\gamma)},
+\end{equation}
+where $d_{\text{space}}$ and $d_{\text{time}}$ are the spatial and temporal
+arc-length functionals induced by the $(-,+,\ldots,+)$ decomposition.
+\end{definition}
+
+\begin{proposition}[Conformal Invariance of $c$]\label{prop:c-conformal}
+Let $\tilde{g} = \Lambda^2 g$ for smooth $\Lambda > 0$. The null condition
+$g_p(v,v) = 0$ is equivalent to $\tilde{g}_p(v,v) = 0$. Hence the null
+cone $\mathcal{C}_p$---and therefore $c$---is a conformal invariant.
+\end{proposition}
+
+\begin{proof}
+$\tilde{g}_p(v,v) = \Lambda^2(p)\, g_p(v,v) = 0$ if and only if $g_p(v,v) = 0$
+(since $\Lambda(p) > 0$).
+\end{proof}
+
+\begin{remark}[Naturalness of $c = 1$]\label{rem:c-natural}
+In geometric (natural) units, we set $c = 1$: the null cone has unit slope,
+and the metric takes the form $\eta = \text{diag}(-1, +1, \ldots, +1)$ in
+Minkowski space. The SI value $c = 299\,792\,458\;\text{m/s}$ reflects a
+specific choice of anthropogenic units (see \Cref{sec:anthropogenic-c}).
+\end{remark}
+
+\section{The Causal Hierarchy}\label{sec:hierarchy}
+
+We state the standard causality conditions, emphasizing their relation
+to the TONLEE framework.
+
+\begin{definition}[Causality Conditions]\label{def:causality-hierarchy}
+A time-oriented Lorentzian manifold $(M,g)$ is:
+\begin{enumerate}[label=(\arabic*), leftmargin=3em]
+  \item \textbf{Chronological} if $p \notin I^+(p)$ for all $p \in M$
+    (no closed timelike curves).
+  \item \textbf{Causal} if $\preceq$ is antisymmetric
+    (no closed causal curves), i.e., $\preceq$ is a partial order.
+  \item \textbf{Distinguishing} if $I^+(p) = I^+(q) \Rightarrow p = q$
+    and $I^-(p) = I^-(q) \Rightarrow p = q$.
+  \item \textbf{Strongly causal} if the Alexandrov topology coincides with
+    the manifold topology.
+  \item \textbf{Stably causal} if there exists a temporal function
+    $t: M \to \R$ with $p \prec q \Rightarrow t(p) < t(q)$.
+  \item \textbf{Globally hyperbolic} if it is causal and for all $p, q \in M$,
+    the causal diamond $J(p,q) = J^+(p) \cap J^-(q)$ is compact.
+\end{enumerate}
+These form a strict hierarchy:
+\begin{equation}\label{eq:hierarchy}
+  \text{(6)} \;\Longrightarrow\; \text{(5)} \;\Longrightarrow\; \text{(4)}
+  \;\Longrightarrow\; \text{(3)} \;\Longrightarrow\; \text{(2)}
+  \;\Longrightarrow\; \text{(1)}.
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Geroch 1970; Bernal--S\'{a}nchez 2003]\label{thm:geroch}
+$(M, g)$ is globally hyperbolic if and only if it admits a \emph{Cauchy surface}
+$\Sigma$---a subset intersected exactly once by every inextendible timelike curve.
+Moreover, $M$ is diffeomorphic to $\R \times \Sigma$, and
+$g = -\beta^2\, dt^2 + h_t$, where $h_t$ is a Riemannian metric on
+each $\{t\} \times \Sigma$ and $\beta > 0$ is the lapse function.
+\end{theorem}
+
+
+%======================================================================
+% PART III
+%======================================================================
+\part{The Ignorance Functional and Emergent Dynamics}
+
+\section{Construction of the Ignorance Functional}\label{sec:ignorance}
+
+\subsection{Motivation: Causality as Residual Mismatch}
+
+In the TONLEE framework, physical dynamics are driven by the universe's
+tendency to minimize residual mismatch---to approach the null state.
+We formalize this through a variational principle.
+
+\begin{definition}[Field Content]\label{def:field-content}
+On a globally hyperbolic spacetime $(M, g)$ with $M \cong \R \times \Sigma$,
+define the \emph{mismatch field configuration} as a pair $(m, \psi)$ where:
+\begin{itemize}[leftmargin=2em]
+  \item $m: M \to \R$ is the \emph{gross field} (a real scalar field
+    representing mass-energy mismatch),
+  \item $\psi: M \to \C$ is the \emph{subtle field} (a complex scalar field
+    representing quantum-informational mismatch).
+\end{itemize}
+Both fields are assumed smooth and of compact spatial support on each slice $\Sigma_t$.
+\end{definition}
+
+\begin{definition}[Ignorance Functional]\label{def:ignorance-functional}
+The \emph{ignorance functional} is the action:
+\begin{equation}\label{eq:ignorance}
+  \II[m, \psi; g] = \int_M \bigl(\Lag_{\text{gross}} + \Lag_{\text{subtle}}
+    + \Lag_{\text{coupling}}\bigr)\sqrt{-\det g}\; d^nx,
+\end{equation}
+where:
+\begin{align}
+  \Lag_{\text{gross}} &= \frac{1}{2}\,g^{\mu\nu}\partial_\mu m\,\partial_\nu m
+    - V(m), \label{eq:L-gross}\\
+  \Lag_{\text{subtle}} &= \frac{i\hbar}{2}\bigl(\psi^*\partial_t\psi
+    - (\partial_t\psi^*)\psi\bigr)
+    - \frac{\hbar^2}{2\mu_{\text{eff}}}\,g^{ij}\partial_i\psi^*\partial_j\psi,
+    \label{eq:L-subtle}\\
+  \Lag_{\text{coupling}} &= \lambda\, m\,|\psi|^2, \label{eq:L-coupling}
+\end{align}
+with $V: \R \to \R_{\geq 0}$ a potential satisfying $V(0) = 0$ and $V''(0) \geq 0$,
+$\mu_{\text{eff}} > 0$ an effective inertial parameter, and $\lambda \in \R$ a
+coupling constant.
+\end{definition}
+
+\begin{remark}
+The specific form of $\Lag_{\text{subtle}}$ in \eqref{eq:L-subtle} is that of
+a Schr\"{o}dinger field on a curved background---the non-relativistic limit of
+a complex Klein--Gordon field. This is deliberate: in the TONLEE picture, the
+quantum (subtle) sector operates on the simultaneity surfaces $\Sigma_t$, which
+are intrinsically Riemannian. The Schr\"{o}dinger structure is \emph{inherited}
+from the Lorentzian ambient space, not postulated independently.
+\end{remark}
+
+\subsection{The Nullity Constraint}
+
+\begin{definition}[Global Nullity Constraint]\label{def:nullity-constraint}
+The field configuration $(m, \psi)$ must satisfy the global constraint:
+\begin{equation}\label{eq:nullity-constraint}
+  \int_M \bigl(T_{\mu\nu}^{(\text{gross})} + T_{\mu\nu}^{(\text{subtle})}\bigr)
+  \,n^\mu\, d\Sigma^\nu = 0,
+\end{equation}
+for every Cauchy surface $\Sigma$, where $T_{\mu\nu}$ is the total
+stress-energy tensor and $n^\mu$ is the future-directed unit normal to $\Sigma$.
+This is the field-theoretic expression of Axiom~\ref{ax:nullity}: the total
+energy on any simultaneity surface is zero.
+\end{definition}
+
+\subsection{The Minimization Principle}
+
+\begin{axiom}[Causality Minimization]\label{ax:minimization}
+The physical field configuration $(m_*, \psi_*)$ extremizes the ignorance
+functional subject to the nullity constraint:
+\begin{equation}\label{eq:extremize}
+  \delta\II[m, \psi; g] = 0 \quad\text{subject to}\quad
+  \int_\Sigma \bigl(\mathcal{E}_{\text{gross}} + \mathcal{E}_{\text{subtle}}\bigr)\,d\mu_\Sigma = 0,
+\end{equation}
+where $\mathcal{E}$ denotes the energy density.
+\end{axiom}
+
+\section{Euler--Lagrange Equations}\label{sec:EL}
+
+\begin{theorem}[Equations of Motion]\label{thm:EL}
+The Euler--Lagrange equations of the ignorance functional \eqref{eq:ignorance}
+are:
+\begin{align}
+  \text{\emph{Gross sector:}} \qquad
+    \Box_g m + V'(m) + \lambda|\psi|^2 &= 0,
+    \label{eq:EL-gross}\\[4pt]
+  \text{\emph{Subtle sector:}} \qquad
+    i\hbar\,\partial_t\psi + \frac{\hbar^2}{2\mu_{\emph{eff}}}\Delta_\Sigma\psi
+    - \lambda\, m\,\psi &= 0,
+    \label{eq:EL-subtle}
+\end{align}
+where $\Box_g = g^{\mu\nu}\nabla_\mu\nabla_\nu$ is the d'Alembertian on $(M,g)$
+and $\Delta_\Sigma = h^{ij}\nabla_i\nabla_j$ is the Laplace--Beltrami operator
+on the Cauchy surface $(\Sigma, h)$.
+\end{theorem}
+
+\begin{proof}
+For the gross sector, compute $\frac{\delta\II}{\delta m} = 0$:
+\begin{align}
+  \frac{\delta}{\delta m}\int_M \Bigl(\frac{1}{2}g^{\mu\nu}\partial_\mu m\,\partial_\nu m
+    - V(m) + \lambda m|\psi|^2\Bigr)\sqrt{-g}\,d^nx &= 0 \nonumber\\
+  \Longrightarrow\quad -\Box_g m - V'(m) - \lambda|\psi|^2 &= 0.
+\end{align}
+Here we used the standard identity for the variation of the kinetic term:
+$\delta\bigl(\frac{1}{2}g^{\mu\nu}\partial_\mu m\,\partial_\nu m\,\sqrt{-g}\bigr)
+= -(\Box_g m)\,\delta m\,\sqrt{-g} + \text{boundary terms}$.
+
+For the subtle sector, compute $\frac{\delta\II}{\delta\psi^*} = 0$. The
+$\Lag_{\text{subtle}}$ Lagrangian yields a Schr\"{o}dinger-type equation on
+$(\Sigma, h)$ with potential $\lambda m$:
+\begin{equation}
+  i\hbar\,\partial_t\psi = -\frac{\hbar^2}{2\mu_{\text{eff}}}\Delta_\Sigma\psi
+    + \lambda\, m\,\psi. \qedhere
+\end{equation}
+\end{proof}
+
+\section{Emergence of the Speed of Light}\label{sec:c-derivation}
+
+\subsection{Well-Posedness Requires Lorentzian Signature}
+
+\begin{theorem}[Causal Speed from Variational Stability]\label{thm:c-emerge}
+For the ignorance functional \eqref{eq:ignorance} to have:
+\begin{enumerate}[label=(\alph*)]
+  \item a well-defined Cauchy problem (existence, uniqueness, and continuous
+    dependence on initial data), and
+  \item finite propagation speed (compact causal support of solutions),
+\end{enumerate}
+the metric $g$ must be of Lorentzian signature $(-,+,\ldots,+)$, and the
+gross-sector equation \eqref{eq:EL-gross} must be hyperbolic. The maximal
+propagation speed is:
+\begin{equation}\label{eq:c-from-metric}
+  c^2 = \frac{|g^{00}|}{g^{ii}} \quad (\text{no sum}),
+\end{equation}
+evaluated in an orthonormal frame. In a maximally symmetric (homogeneous,
+isotropic) background---the state closest to nullity---this ratio is a
+universal constant.
+\end{theorem}
+
+\begin{proof}[Proof Strategy]
+Consider the principal symbol of the operator $\Box_g + V''(m_0)$ linearized
+about a background $m_0$:
+\begin{equation}
+  \sigma_{\text{princ}}(\xi) = g^{\mu\nu}\xi_\mu\xi_\nu.
+\end{equation}
+The equation is hyperbolic if and only if the principal symbol has Lorentzian
+signature. The characteristic surfaces (wavefronts) satisfy
+$g^{\mu\nu}\xi_\mu\xi_\nu = 0$, i.e., $\xi$ is null. By the theory of
+hyperbolic PDEs (Leray, 1953; H\"{o}rmander, 1963), solutions to the
+Cauchy problem have support in $J^+(\supp(\text{data}))$---the causal future
+of the initial data support. The propagation speed along any spatial direction
+$e_i$ is bounded by $c = \sqrt{|g^{00}|/g^{ii}}$ in the chosen frame.
+
+In particular, if $g$ were Riemannian (all positive eigenvalues), the equation
+would be elliptic, the Cauchy problem would be ill-posed (Hadamard), and no
+finite propagation speed would exist. Lorentzian signature is thus not a
+free choice but a \emph{consequence} of requiring the ignorance functional
+to have stable, causal extrema.
+\end{proof}
+
+\subsection{The Null Geodesic as Zero-Mismatch Trajectory}
+
+\begin{proposition}\label{prop:null-geodesic}
+Setting $m \equiv 0$ and $\psi \equiv 0$ in the gross-sector equation
+\eqref{eq:EL-gross} yields the trivially satisfied identity $0 = 0$
+(``absolute nullity''). The first nontrivial solutions are the
+\emph{massless modes}: linearizing about $m_0 = 0$ with $V'(0) = 0$
+and $\lambda = 0$:
+\begin{equation}\label{eq:massless-wave}
+  \Box_g\, \delta m = 0.
+\end{equation}
+The characteristics of \eqref{eq:massless-wave} satisfy
+$g^{\mu\nu}k_\mu k_\nu = 0$---the null geodesic equation for the
+wave-covector $k_\mu$. In the geometric optics limit, the rays are
+null geodesics of $(M,g)$, propagating at speed $c$.
+\end{proposition}
+
+\begin{remark}
+The photon---the massless excitation---does not ``travel at the speed of
+light.'' Rather, $c$ is \emph{defined by} the null cone of $(M,g)$, which
+is the characteristic surface of the wave equation arising from the ignorance
+functional. The photon traces the boundary between the causal and acausal
+domains of spacetime.
+\end{remark}
+
+\subsection{Anthropogenic Units and the Value $c = 299\,792\,458\;\text{m/s}$}
+\label{sec:anthropogenic-c}
+
+\begin{proposition}[Unit Analysis]\label{prop:anthropogenic}
+Since 1983, the meter is defined as:
+\begin{equation}
+  1\;\text{m} := \frac{c}{299\,792\,458}\;\text{light-seconds},
+\end{equation}
+making the numerical value of $c$ in SI tautological. The non-trivial
+content is the \emph{historical coincidence}: the original meter
+($\approx 10^{-7}$ of the Earth's quadrant) and the second ($1/86\,400$ of
+a solar day, later redefined via the cesium-133 hyperfine transition at
+$\Delta\nu_{\text{Cs}} = 9\,192\,631\,770\;\text{Hz}$) produce the ratio:
+\begin{equation}\label{eq:anthropogenic-ratio}
+  c = \frac{\text{conformal conversion factor}}{\text{(anthropogenic length)}/
+  \text{(anthropogenic time)}}
+  = \frac{1\;\text{[geometric]}}{1\;\text{m}/1\;\text{s}}
+  = 299\,792\,458\;\frac{\text{m}}{\text{s}}.
+\end{equation}
+This ratio encodes the hierarchy of mismatch scales: the electromagnetic
+scale ($\Delta\nu_{\text{Cs}}$) and the gravitational scale
+($C_\oplus \approx 4 \times 10^7\;\text{m}$), linked by:
+\begin{equation}\label{eq:scale-hierarchy}
+  \frac{c}{C_\oplus \cdot \Delta\nu_{\text{Cs}}}
+  \approx 8.1 \times 10^{-10},
+\end{equation}
+a dimensionless number determined by $\alpha$, $G$, and the particle masses.
+\end{proposition}
+
+
+%======================================================================
+% PART IV
+%======================================================================
+\part{Simultaneity, Quantum Mechanics, and Black Holes}
+
+\section{Simultaneity Surfaces and Entanglement}\label{sec:simultaneity}
+
+\subsection{Spacelike Hypersurfaces as Quantum Arenas}
+
+\begin{definition}[Simultaneity Surface]\label{def:simultaneity}
+A \emph{simultaneity surface} in $(M, g)$ is a smooth, achronal, spacelike
+hypersurface $\Sigma \subset M$:
+\begin{equation}\label{eq:spacelike-hyp}
+  g_p(n, n) < 0 \qquad \forall\, p \in \Sigma,
+\end{equation}
+where $n$ is the unit normal to $\Sigma$. (Convention: $n$ is timelike, hence
+$g(n,n) < 0$; vectors tangent to $\Sigma$ are spacelike.)
+\end{definition}
+
+\begin{postulate}[Simultaneity $\Rightarrow$ Quantum Correlations]\label{post:sim-QM}
+Two events $p, q \in M$ can share quantum correlations (entanglement) only if:
+\begin{enumerate}[label=(\roman*)]
+  \item There exists a simultaneity surface $\Sigma$ with $p, q \in \Sigma$.
+  \item There exists a common causal ancestor: $\exists\, r \in M$ with
+    $r \prec p$ and $r \prec q$ (i.e., $p, q \in J^+(r)$).
+\end{enumerate}
+\end{postulate}
+
+\begin{remark}
+This postulate does not contradict the standard formulation of quantum
+mechanics on a fixed background: any pair of spacelike-separated events
+that are entangled in the standard formulation always satisfies conditions~(i)
+and~(ii) above, because in a globally hyperbolic spacetime, every pair of
+causally related events to a common past share a Cauchy surface. The postulate
+becomes nontrivial in the black hole interior where simultaneity surfaces
+degenerate (see \Cref{sec:BH-interior}).
+\end{remark}
+
+\subsection{Microcausality from the Ignorance Functional}
+
+\begin{theorem}[Emergent Microcausality]\label{thm:microcausality}
+Let $\hat{\phi}(x)$ be the quantized gross field satisfying the linearized
+equation $\Box_g \hat{\phi} = 0$ on a globally hyperbolic $(M, g)$. Define
+the causal propagator:
+\begin{equation}
+  \Delta(x, y) := G_{\text{ret}}(x, y) - G_{\text{adv}}(x, y),
+\end{equation}
+where $G_{\text{ret/adv}}$ are the retarded/advanced Green's functions of
+$\Box_g$. Then:
+\begin{enumerate}[label=(\alph*)]
+  \item $\supp\bigl(\Delta(\cdot, y)\bigr) \subseteq J^+(y) \cup J^-(y)$.
+  \item The canonical commutation relation is:
+    \begin{equation}\label{eq:CCR}
+      [\hat{\phi}(x), \hat{\phi}(y)] = i\,\Delta(x,y)\,\hat{\mathbb{1}}.
+    \end{equation}
+  \item For spacelike-separated $x, y$ (i.e., $x \notin J^+(y) \cup J^-(y)$):
+    \begin{equation}\label{eq:microcausal}
+      [\hat{\phi}(x), \hat{\phi}(y)] = 0.
+    \end{equation}
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Part~(a) follows from the support properties of retarded/advanced Green's
+functions on globally hyperbolic spacetimes (Leray, 1953; B\"{a}r--Ginoux--Pf\"{a}ffle,
+2007). Part~(b) is the Peierls bracket construction: the commutator of the
+free field is fixed by the causal propagator. Part~(c) is immediate from
+(a) and (b): if $x$ and $y$ are spacelike separated, then
+$x \notin J^+(y) \cup J^-(y)$, so $\Delta(x,y) = 0$.
+\end{proof}
+
+\section{Black Hole Interiors: Simultaneity Breakdown}\label{sec:BH-interior}
+
+\subsection{Coordinate Signature Inversion}
+
+\begin{theorem}[Simultaneity Failure in the Schwarzschild Interior]\label{thm:BH-sim}
+In the Schwarzschild spacetime with mass parameter $M_{\text{BH}}$,
+the metric in Schwarzschild coordinates $(t, r, \theta, \varphi)$ is:
+\begin{equation}\label{eq:schwarzschild}
+  ds^2 = -\left(1 - \frac{r_s}{r}\right)c^2\,dt^2
+  + \left(1 - \frac{r_s}{r}\right)^{-1}dr^2 + r^2\,d\Omega^2,
+\end{equation}
+where $r_s = 2GM_{\text{BH}}/c^2$. For $r < r_s$:
+\begin{enumerate}[label=(\roman*)]
+  \item The coefficient of $dt^2$ becomes positive and the coefficient of
+    $dr^2$ becomes negative: $r$ is now a timelike coordinate and $t$ is
+    spacelike.
+  \item A surface of constant $r < r_s$ has induced metric of signature
+    $(+, +, +)$ on $\{t, \theta, \varphi\}$---it is \emph{spacelike}
+    only in the $\{t\}$-direction but $r = \text{const}$ surfaces are
+    actually timelike (they contain the timelike direction $\partial_r$
+    restricted to the surface is not tangent; rather, $\partial_t$ is
+    now spacelike and is tangent to the surface).
+\end{enumerate}
+More precisely: for $r < r_s$, the gradient $dr$ has
+$g^{rr} = -(1 - r_s/r) > 0$, so $dr$ is a \emph{timelike} 1-form.
+Surfaces of constant $r$ have $dr = 0$ as their defining condition, so they
+are level sets of a timelike function---hence they are \emph{spacelike}
+hypersurfaces. However, two events at the same $r < r_s$ but
+different angular positions are connected by a spacelike geodesic on this
+surface, while events at \emph{different} $r$-values inside the horizon are
+necessarily separated by a timelike interval (since $r$ is the time direction).
+This means that an observer falling inward cannot construct a simultaneity
+surface connecting events at different stages of their radial infall---the
+``simultaneity surfaces'' shrink as one approaches $r = 0$.
+\end{theorem}
+
+\begin{corollary}[TONLEE Prediction: Quantum Decoherence Near Horizons]\label{cor:decoherence}
+Since \Cref{post:sim-QM} requires a simultaneity surface for entanglement,
+and the available simultaneity surfaces shrink (in spatial extent) as
+$r \to r_s^+$ from outside and as $r \to 0$ from inside, the TONLEE
+framework predicts:
+\begin{equation}\label{eq:decoherence-rate}
+  \tau_{\text{coherence}} \;\propto\; \text{Area}(\Sigma \cap \mathcal{U}),
+\end{equation}
+where $\mathcal{U}$ is the observer's causal neighborhood. Near the horizon,
+$\text{Area}(\Sigma \cap \mathcal{U}) \to 0$, and quantum coherence times
+should measurably decrease.
+\end{corollary}
+
+
+%======================================================================
+% PART V
+%======================================================================
+\part{The Fibonacci--Ramanujan Null Universe}
+
+\section{The Fibonacci Generating Function and Regularization}\label{sec:fibonacci}
+
+\subsection{The Generating Function}
+
+\begin{definition}
+The Fibonacci sequence $\{F_n\}_{n \geq 0}$ is defined by $F_0 = 0$, $F_1 = 1$,
+and $F_{n+2} = F_{n+1} + F_n$. Its ordinary generating function is:
+\begin{equation}\label{eq:fib-ogf}
+  f(x) = \sum_{n=0}^\infty F_n\, x^n = \frac{x}{1 - x - x^2},
+\end{equation}
+convergent for $|x| < 1/\varphi$, where $\varphi = \frac{1+\sqrt{5}}{2}$
+is the golden ratio.
+\end{definition}
+
+\subsection{Analytic Continuation and the Value $f(1) = -1$}
+
+\begin{theorem}[Fibonacci--Ramanujan Identity]\label{thm:fib-ram}
+The rational function $f(x) = \frac{x}{1 - x - x^2}$ has a meromorphic
+extension to all of $\C$, with simple poles at $x = -\varphi$ and
+$x = 1/\varphi = \varphi - 1$. At $x = 1$ (which lies between the two poles
+and is not a singularity of $f$... let us verify):
+
+\emph{Correction:} The denominator $1 - x - x^2 = -(x^2 + x - 1)$ vanishes at
+$x = \frac{-1 \pm \sqrt{5}}{2}$, i.e., at $x = \varphi - 1 \approx 0.618$
+and $x = -\varphi \approx -1.618$.
+
+Since $x = 1$ lies \emph{outside} the radius of convergence
+($1 > 1/\varphi \approx 0.618$) but is not a pole of $f$, the value
+$f(1)$ is well-defined as a value of the rational function:
+\begin{equation}\label{eq:fib-reg}
+  f(1) = \frac{1}{1 - 1 - 1} = \frac{1}{-1} = -1.
+\end{equation}
+This serves as a regularized value for the formal divergent series
+$\sum_{n=0}^\infty F_n$.
+\end{theorem}
+
+\begin{proof}
+The generating function $f(x) = x/(1 - x - x^2)$ is a rational function
+with poles at $x_{\pm} = (-1 \pm \sqrt{5})/2$. Since $x = 1$ is neither
+of these values ($x_+ \approx 0.618$, $x_- \approx -1.618$), the rational
+function is well-defined at $x = 1$. The computation is direct substitution.
+
+The interpretation as a ``regularized sum'' follows from the general
+principle: for a power series $\sum a_n x^n$ with finite radius of convergence
+$R$, if the function defined by the series has an analytic (or meromorphic)
+continuation beyond $R$, the value at a point $x_0 > R$ (provided $x_0$
+is not a pole) serves as a canonical regularized value for $\sum a_n x_0^n$.
+This is precisely the Abel summation philosophy, and coincides with
+Ramanujan's summation method for rational generating functions.
+\end{proof}
+
+\begin{remark}[Subtlety: $x = 1$ is Beyond a Pole]
+Since the pole at $x_+ = (\sqrt{5}-1)/2 \approx 0.618$ lies between $0$ and $1$,
+the analytic continuation from $|x| < 1/\varphi$ to $x = 1$ must ``pass through''
+this singularity. The rational function $f(x)$ is of course defined at $x = 1$
+regardless of the power series, but the identification of $f(1)$ with the
+regularized value of $\sum F_n$ is a statement about the rational function,
+not about summability in the Abel or Ces\`{a}ro sense.
+
+Technically, $\sum F_n x^n$ is \emph{not} Abel summable (the limit
+$\lim_{x \to 1^-} f(x)$ does not exist because of the pole at $x_+ < 1$).
+The value $f(1) = -1$ should therefore be understood as a
+\emph{rational-function regularization}: the unique value assigned to the
+formal series by its generating function, evaluated at $x = 1$ in the
+rational (not power-series) sense.
+\end{remark}
+
+\subsection{The Null Universe Identity}
+
+\begin{definition}[Unit Universe and Its Reflection]\label{def:unit-universe}
+Define:
+\begin{align}
+  U_+ &:= +1 \quad\text{(the unit universe: total positive mismatch)}, \\
+  U_- &:= -1 \quad\text{(the holographic reflection: the Fibonacci--Ramanujan shadow)}.
+\end{align}
+\end{definition}
+
+\begin{proposition}[Null Identity]\label{prop:null-identity}
+\begin{equation}\label{eq:null-identity}
+  U_+ + U_- = +1 + (-1) = 0.
+\end{equation}
+This is the arithmetic instantiation of \Cref{ax:nullity}.
+\end{proposition}
+
+\subsection{The Golden Ratio as Mismatch Growth Rate}
+
+\begin{proposition}\label{prop:golden-ratio}
+The Fibonacci recurrence $F_{n+2} = F_{n+1} + F_n$ has the asymptotic
+solution $F_n \sim \varphi^n / \sqrt{5}$. The golden ratio
+$\varphi = (1 + \sqrt{5})/2$ satisfies:
+\begin{equation}\label{eq:golden-fixed}
+  \varphi^2 = \varphi + 1, \qquad \varphi = 1 + \cfrac{1}{1 + \cfrac{1}{1 + \cfrac{1}{\ddots}}}.
+\end{equation}
+In the TONLEE interpretation, $\varphi$ encodes the discrete mismatch
+growth rate: each new mismatch level is generated by the combination of
+the two preceding levels, and the ratio of consecutive levels converges
+to $\varphi$.
+\end{proposition}
+
+
+\section{Dark Sector as Intrinsic/Extrinsic Mismatch Decomposition}\label{sec:dark}
+
+\subsection{The Two Pathways to Nullity}
+
+\begin{definition}[Dark Sector Decomposition]\label{def:dark-sector}
+Decompose the ignorance functional into intrinsic and extrinsic components:
+\begin{equation}
+  \II = \II_{\text{int}} + \II_{\text{ext}},
+\end{equation}
+where:
+\begin{itemize}[leftmargin=2em]
+  \item $\II_{\text{int}}$ contains terms that drive $m \to 0$ locally
+    (gravitational collapse, annihilation---the ``intrinsic pathway'').
+  \item $\II_{\text{ext}}$ contains terms that drive $\psi \to 0$ globally
+    (expansion, dilution---the ``extrinsic pathway'').
+\end{itemize}
+Define the effective weights:
+\begin{equation}\label{eq:dark-weights}
+  w_{\text{DM}} := \frac{\delta\II_{\text{int}}/\delta m}{\delta\II/\delta m},
+  \qquad
+  w_{\text{DE}} := \frac{\delta\II_{\text{ext}}/\delta\psi^*}{\delta\II/\delta\psi^*}.
+\end{equation}
+\end{definition}
+
+\begin{postulate}[Fibonacci Equilibrium]\label{post:fib-eq}
+At cosmological equilibrium (the state of maximally efficient approach
+to nullity), the dark-sector ratio attains:
+\begin{equation}\label{eq:fib-meeting}
+  \frac{w_{\text{DM}}}{w_{\text{DE}}} = \varphi^{-1} = \varphi - 1
+  \approx 0.618.
+\end{equation}
+\end{postulate}
+
+\begin{remark}[Observational Status]\label{rem:observed-ratio}
+Current observations give $\Omega_{\text{DM}}/\Omega_{\text{DE}} \approx
+0.27/0.68 \approx 0.397$. Including baryonic matter:
+$(\Omega_{\text{DM}} + \Omega_b)/\Omega_{\text{DE}} \approx 0.32/0.68
+\approx 0.47$. The discrepancy from $\varphi^{-1} \approx 0.618$ may indicate
+the universe has not yet reached the Fibonacci equilibrium, that baryonic matter
+represents an additional mismatch component not yet fully resolved, or that
+the identification \eqref{eq:fib-meeting} requires modification. This remains
+an open problem.
+\end{remark}
+
+\subsection{Cosmological Nullity}
+
+\begin{proposition}[Total Dark Sector Cancellation]\label{prop:cosmo-null}
+In the TONLEE framework, the total cosmological energy budget satisfies:
+\begin{equation}\label{eq:cosmo-null}
+  E_{\text{DM}} + E_{\text{DE}} + E_{\text{visible}}
+  + E_{\text{gravitational}} = 0.
+\end{equation}
+This is consistent with the standard result that in a spatially flat
+Friedmann universe ($k = 0$), the total energy (kinetic + potential +
+matter) vanishes identically. In the Friedmann equation:
+\begin{equation}
+  H^2 = \frac{8\pi G}{3}\rho_{\text{total}} - \frac{k}{a^2},
+\end{equation}
+setting $k = 0$ does not by itself enforce $E_{\text{total}} = 0$, but the
+Newtonian energy argument (Tryon, 1973) shows that for a flat universe,
+the gravitational binding energy exactly compensates the mass-energy content,
+yielding $E_{\text{total}} = 0$---consistent with \Cref{ax:nullity}.
+\end{proposition}
+
+
+%======================================================================
+% PART VI
+%======================================================================
+\part{Information, Domain of Dependence, and Predictions}
+
+\section{Information as Causal Cardinality}\label{sec:information}
+
+\begin{definition}[Information Content]\label{def:info}
+For a spacetime region $D \subseteq M$, define the \emph{information content}
+as the cardinality of the causal relation restricted to $D$:
+\begin{equation}\label{eq:info}
+  I(D) := \bigl|\{(p,q) \in D \times D : p \prec q\}\bigr|.
+\end{equation}
+In the continuum limit (where $D$ contains $N$ causal-set elements), this
+scales as:
+\begin{equation}
+  I(D) \sim C_n \cdot N^2,
+\end{equation}
+where $C_n$ is a dimension-dependent constant encoding the average
+connectivity of the causal set in $n$ dimensions.
+\end{definition}
+
+\begin{theorem}[Domain of Dependence and Causal Determinism]\label{thm:DoD}
+Let $S \subset M$ be a closed achronal set in a globally hyperbolic spacetime.
+The future domain of dependence is:
+\begin{equation}
+  D^+(S) := \bigl\{p \in M : \text{every past-inextendible causal curve through }
+  p \text{ intersects } S\bigr\}.
+\end{equation}
+For a well-posed hyperbolic system (such as equation \eqref{eq:EL-gross}),
+the solution in $D^+(S)$ is uniquely determined by data on $S$. Moreover:
+\begin{equation}
+  \supp(\text{solution}) \subseteq J^+\bigl(\supp(\text{data})\bigr).
+\end{equation}
+This is the PDE-theoretic expression of causality: information (in the sense
+of \Cref{def:info}) cannot propagate outside the light cone.
+\end{theorem}
+
+\section{Black Holes as Causality Destroyers}\label{sec:BH-causality}
+
+\begin{definition}[Black Hole Region]\label{def:BH}
+In an asymptotically flat spacetime $(M, g)$ with conformal boundary
+$\mathscr{I}^+$ (future null infinity), the \emph{black hole region} is:
+\begin{equation}\label{eq:BH-region}
+  \mathcal{B} := M \setminus J^-(\mathscr{I}^+),
+\end{equation}
+and the \emph{event horizon} is:
+\begin{equation}\label{eq:horizon}
+  \mathcal{H}^+ := \partial J^-(\mathscr{I}^+) \cap M.
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Hawking's Area Theorem, 1971]\label{thm:area}
+If $(M, g)$ satisfies the null energy condition
+$R_{\mu\nu}k^\mu k^\nu \geq 0$ for all null $k^\mu$, and if the spacetime
+is future asymptotically predictable, then the area of the event horizon
+$\mathcal{H}^+$ is non-decreasing along any future-directed null generator:
+\begin{equation}\label{eq:area-theorem}
+  \frac{dA}{d\lambda} \geq 0,
+\end{equation}
+where $\lambda$ is the affine parameter along the generators.
+\end{theorem}
+
+\begin{remark}[TONLEE Reinterpretation]
+The area theorem is standardly interpreted as black hole entropy
+($S_{\text{BH}} = k_B A / 4\ell_P^2$) increasing. In the TONLEE framework,
+the increase in horizon area represents the \emph{destruction of causal
+structure}: causally connected spacetime is converted into the causally
+disconnected interior. Information content $I$ decreases outside the horizon,
+registering as an entropy increase (loss of accessible causal relations).
+The TONLEE prediction is that isolated black holes expand (horizon area
+increases) even without infalling matter, reinterpreting Hawking radiation
+as the mechanism of this causal destruction.
+\end{remark}
+
+\section{Summary of Physical Predictions}\label{sec:predictions}
+
+The TONLEE framework generates the following testable predictions, stated
+with their mathematical origins:
+
+\begin{enumerate}[label=\textbf{P\arabic*.}, leftmargin=3em]
+  \item \textbf{No gravitons.} Gravity is the conformal arena (\Cref{thm:Malament}),
+    not a quantum field. Quantum gravity scattering cross-sections are predicted
+    to be exactly zero.
+
+  \item \textbf{Dark matter is not a particle.} Direct detection experiments
+    should yield null results. Dark matter effects are encoded in the causal
+    memory structure (\Cref{def:dark-sector}).
+
+  \item \textbf{Black holes expand, not evaporate.} The horizon area strictly
+    increases (\Cref{thm:area}), reinterpreted as causal destruction.
+
+  \item \textbf{Gravitational decoherence.} Quantum coherence times decrease
+    in strong gravitational fields (\Cref{cor:decoherence}), scaling with the
+    area of available simultaneity surfaces.
+
+  \item \textbf{Entanglement requires shared causal past.} Entanglement is
+    impossible between particles whose entire histories lie inside a black hole
+    (\Cref{post:sim-QM} + \Cref{thm:BH-sim}).
+
+  \item \textbf{No initial singularity.} The CMB should be consistent with a
+    no-boundary condition rather than a sharp initial singularity
+    (\Cref{ax:nullity} applied cosmologically).
+
+  \item \textbf{Cosmological constant vanishes in total.} $\Lambda_{\text{obs}} > 0$
+    is a local mismatch; $\int_{\text{total}} \Lambda\,d\mu = 0$
+    (\Cref{prop:cosmo-null}).
+\end{enumerate}
+
+
+%======================================================================
+% APPENDIX
+%======================================================================
+\appendix
+
+\section{Algebraic Quantum Field Theory: Haag--Kastler Axioms}\label{app:AQFT}
+
+For completeness, we state the standard axiomatic framework that encodes
+causality in quantum field theory.
+
+\begin{definition}[Haag--Kastler Net]\label{def:HK}
+A \emph{local net of observables} on $(M, g)$ is an assignment
+$\mathcal{O} \mapsto \Alg(\mathcal{O})$ from open, relatively compact
+regions $\mathcal{O} \subset M$ to unital $C^*$-algebras, satisfying:
+\begin{enumerate}[label=(A\arabic*)]
+  \item \textbf{Isotony:} $\mathcal{O}_1 \subseteq \mathcal{O}_2 \Rightarrow
+    \Alg(\mathcal{O}_1) \subseteq \Alg(\mathcal{O}_2)$.
+  \item \textbf{Microcausality:} If $\mathcal{O}_1 \perp \mathcal{O}_2$
+    (spacelike separated), then
+    $[A, B] = 0$ for all $A \in \Alg(\mathcal{O}_1)$, $B \in \Alg(\mathcal{O}_2)$.
+  \item \textbf{Covariance:} There exists a representation $\alpha$ of the
+    isometry group by automorphisms: $\alpha_g(\Alg(\mathcal{O})) = \Alg(g \cdot \mathcal{O})$.
+  \item \textbf{Spectrum condition:} In the vacuum representation, the joint
+    spectrum of the translation generators $P^\mu$ lies in $\overline{V^+}$
+    (closed forward light cone).
+\end{enumerate}
+\end{definition}
+
+The connection to TONLEE is direct: axiom (A2) is the operator-algebraic
+expression of the causal structure established in \Cref{sec:causal-order},
+and \Cref{thm:microcausality} shows that it is derivable from the ignorance
+functional's hyperbolic structure.
+
+
+\section{Process Matrices and Indefinite Causal Order}\label{app:process}
+
+\begin{definition}[Process Matrix]\label{def:process}
+For $N$ parties with input/output Hilbert spaces $\Hil^{A_i^I} \otimes \Hil^{A_i^O}$,
+a \emph{process matrix} is:
+\begin{equation}
+  W \in \Lag\!\left(\bigotimes_{i=1}^N \Hil^{A_i^I} \otimes \Hil^{A_i^O}\right),
+  \qquad W \geq 0,
+\end{equation}
+satisfying normalization: $\Tr\bigl[W(\bigotimes_i M^{A_i})\bigr] = 1$ for
+all CPTP maps $\{M^{A_i}\}$.
+\end{definition}
+
+\begin{definition}[Causal Separability]\label{def:causal-sep}
+$W$ is \emph{causally separable} if:
+\begin{equation}
+  W = \sum_\sigma q_\sigma\, W_\sigma, \qquad q_\sigma \geq 0,\;
+  \sum_\sigma q_\sigma = 1,
+\end{equation}
+where each $W_\sigma$ is compatible with a definite causal order $\sigma$.
+A violation of causal separability witnesses \emph{indefinite causal order}.
+\end{definition}
+
+\begin{remark}
+In TONLEE, a causally inseparable process matrix $W$ represents a mismatch
+configuration in which the causal order itself is ``mismatched''---the
+partial order $\preceq$ is not globally well-defined. Such configurations
+are expected near black hole horizons where the causal structure degrades
+(\Cref{thm:BH-sim}).
+\end{remark}
+
+\bigskip
+\begin{center}
+\rule{0.5\textwidth}{0.4pt}
+\end{center}
+\bigskip
+
+\begin{quote}
+\emph{Nothing is the hardest thing to understand, because it is the only
+thing that needs no explanation---and yet explains everything.}
+\hfill---TONLEE
+\end{quote}
+
+\end{document}

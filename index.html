@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nothingness |</title>
+    <script data-goatcounter="https://tonlee.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --void: #050505;
+            --near-void: #0a0a0a;
+            --deep: #111;
+            --smoke: #1a1a1a;
+            --ash: #888;
+            --bone: #c8c4bc;
+            --light: #e8e4dc;
+            --white: #f5f2ec;
+            --accent: #d4a056;
+            --accent-dim: #b8863a;
+            --serif: 'Cormorant Garamond', Georgia, serif;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'DM Sans', sans-serif;
+        }
+
+        html { font-size: 17px; scroll-behavior: smooth; }
+
+        body {
+            background: var(--void);
+            color: var(--bone);
+            font-family: var(--sans);
+            font-weight: 300;
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .void-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 40%, rgba(30,25,20,0.4) 0%, transparent 70%),
+                radial-gradient(circle at 20% 80%, rgba(20,15,10,0.2) 0%, transparent 40%);
+        }
+
+        .void-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        nav {
+            padding: 2rem 0 0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 2rem;
+        }
+
+        nav a {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--ash);
+            transition: color 0.4s;
+        }
+        nav a:hover { color: var(--white); }
+
+        .hero {
+            padding: 12vh 0 6vh;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: var(--serif);
+            font-weight: 300;
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            color: var(--white);
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.4em;
+            opacity: 0;
+            animation: fadeUp 1.2s 0.3s ease forwards;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-family: var(--serif);
+            font-size: 1.1rem;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--ash);
+            max-width: 460px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeUp 1.2s 0.7s ease forwards;
+        }
+
+        .intro {
+            text-align: center;
+            padding: 3rem 0 4rem;
+            border-top: 1px solid var(--smoke);
+        }
+
+        .intro .thoughts {
+            font-size: 0.95rem;
+            color: var(--bone);
+            margin-bottom: 0.8rem;
+        }
+
+        .intro .journey {
+            font-size: 0.9rem;
+            color: var(--ash);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .nothingness {
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--smoke);
+        }
+
+        .nothingness .label {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent-dim);
+            margin-bottom: 2rem;
+        }
+
+        .nothingness blockquote {
+            font-family: var(--serif);
+            font-size: clamp(1.15rem, 3vw, 1.5rem);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--light);
+            line-height: 1.6;
+            max-width: 620px;
+            margin: 0 auto 2rem;
+        }
+
+        .nothingness .explain {
+            font-size: 0.9rem;
+            color: var(--ash);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .post-entry {
+            padding: 3rem 0;
+            border-top: 1px solid var(--smoke);
+        }
+
+        .post-entry .date {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            color: var(--ash);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-entry h2 {
+            font-family: var(--serif);
+            font-weight: 300;
+            font-size: 2rem;
+            color: var(--white);
+            margin-bottom: 0.2rem;
+        }
+
+        .post-entry h2 a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s;
+        }
+        .post-entry h2 a:hover { color: var(--accent); }
+
+        .post-entry .desc {
+            font-size: 0.95rem;
+            color: var(--bone);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            line-height: 1.75;
+        }
+
+        .post-entry .desc strong {
+            color: var(--light);
+        }
+
+        .consequences {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-label {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-dim);
+            margin-bottom: 1.5rem;
+        }
+
+        .consequences ul, .core-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.3rem;
+        }
+
+        .consequences li, .core-list li {
+            padding: 1.2rem 1.5rem;
+            background: var(--near-void);
+            border: 1px solid var(--smoke);
+            border-radius: 2px;
+            font-size: 0.88rem;
+            color: var(--ash);
+            line-height: 1.7;
+            transition: border-color 0.4s;
+        }
+
+        .consequences li:hover, .core-list li:hover {
+            border-color: #333;
+        }
+
+        .consequences li strong, .core-list li strong {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .consequences li em, .core-list li em {
+            font-style: italic;
+            color: var(--bone);
+        }
+
+        .links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .link-btn {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--bone);
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--smoke);
+            border-radius: 2px;
+            transition: all 0.4s;
+        }
+
+        .link-btn:hover {
+            border-color: var(--accent);
+            color: var(--white);
+            background: rgba(212,160,86,0.06);
+        }
+
+        .shutdown {
+            padding: 3rem 0;
+            border-top: 1px solid var(--smoke);
+            margin-top: 3rem;
+        }
+
+        .shutdown .date {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            color: var(--ash);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .shutdown h2 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.6rem;
+            color: var(--light);
+            margin-bottom: 0.2rem;
+        }
+
+        .shutdown .epigraph {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: 0.95rem;
+            color: var(--ash);
+            margin-bottom: 1.2rem;
+        }
+
+        .shutdown .desc {
+            font-size: 0.92rem;
+            color: var(--bone);
+            margin-bottom: 2rem;
+            max-width: 660px;
+            line-height: 1.75;
+        }
+
+        footer {
+            padding: 4rem 0 3rem;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            color: var(--ash);
+            opacity: 0.5;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="void-bg"></div>
+
+    <div class="container">
+
+        <nav>
+            <a href="shutdown-process.html">The Shutdown Process &rarr;</a>
+        </nav>
+
+        <section class="hero">
+            <h1><em>NOTHINGNESS</em></h1>
+            <p class="hero-sub">Notes on the Null-Universe</p>
+        </section>
+
+        <section class="intro fade-in">
+            <p class="thoughts">A collection of thoughts on causality, the void, and the physics of the absolute.</p>
+            <p class="journey">These come from my research journey that began during my visits to BARC, Mumbai, then in Europe at UBFC Dijon, AEI Hannover and University of Luxembourg.</p>
+        </section>
+
+        <section class="nothingness fade-in">
+            <p class="label">On Nothingness</p>
+            <blockquote>
+                Nothingness is not the absence of spacetime. The manifold, the metric, the curvature &mdash; they persist. Nothingness is the absence of the causal depth required for any physical process to occur.
+            </blockquote>
+            <p class="explain">
+                It is distinct from the quantum vacuum. The quantum vacuum is a state <em>within</em> quantum mechanics.
+                Nothingness is the condition under which even the quantum vacuum has insufficient future to be defined.
+                At the singularity, the countdown reaches zero. Nothing can survive.
+            </p>
+        </section>
+
+        <section class="post-entry fade-in">
+            <p class="date">Feb 10, 2026</p>
+            <h2><a href="tonlee.html">TONLEE: Theory of Nothingness</a></h2>
+
+            <p class="desc">
+                <strong>An alternative approach to the Theory of Everything.</strong><br>
+                Here, gravity, time, information and mass are not quantizable. Quantum fields emerge in a causally connected regime&mdash;a regime that allows simultaneity at a distance. Inside a black hole, simultaneity is restricted. This approach is inspired by Freeman Dyson's comment on approaching Gravito-Quantum and why NO Quantum Gravity.
+            </p>
+
+            <div class="consequences">
+                <h3 class="section-label">Consequences of the Theory</h3>
+                <ul>
+                    <li><strong>Phenomenal Universe:</strong> The universe is not an object but a phenomenon, where natural processes assume the path of causality minimization.</li>
+                    <li><strong>Definition of Physical:</strong> "Physical" is anything that exists within a causally connected regime as a consequence of allowed simultaneity and entanglement at a distance. Inside a black hole this spooky action can no longer happen at a distance due to the causal disconnectedness of the background. Creating a regime of vacuum of physical laws, which is the real vacuum or nothingness/nullity. This is not the same as nothing of quantum vacuum as proposed by Lawrence Krauss.</li>
+                    <li><strong>Information Destruction:</strong> Black holes help in the destruction of information. Information, like matter, only emerges in a causally connected spacetime.</li>
+                    <li><strong>Black Hole Growth:</strong> Black holes do not evaporate; instead, they evaporate the spacetime outside the event horizon, constantly increasing in size even in an isolated universe.</li>
+                    <li><strong>Dark Sector Memory:</strong> Dark matter represents the <em>intrinsic memory effect of relation</em> (entanglement is a direct instantaneous dark matter memory effect). Dark energy represents the <em>extrinsic memory effect of unrelation</em>. The young galaxies have almost no dark matter like DF2 and old galaxies like Candidate Dark Galaxy-2 (CDG-2) has mostly dark matter. As with time more memory gets accumulated.</li>
+                    <li><strong>Zero Causality:</strong> Net causality of Universe is 0 in an eternal universe which lacks a unique beginning like a Big Bang singularity.</li>
+                    <li><strong>Emergence of Time:</strong> Simultaneity allows co-motion (dynamics). When matter forms chunks on a causally connected manifold, quantum mechanics and fields naturally emerge alongside emergent time.</li>
+                    <li><strong>Time Dilation:</strong> Time appears to move slowly as we move fast because simultaneity becomes difficult to achieve. At the event horizon, time ceases to exist, stripping the information it carried.</li>
+                </ul>
+            </div>
+            <div class="links">
+                <a href="tonlee.html" class="link-btn">Read Proposal &rarr;</a>
+                <a href="https://github.com/tonlee-nothingness/tonlee-nothingness.github.io/blob/main/Mi%20(1).pdf" target="_blank" class="link-btn">Read Paper 1 &rarr;</a>
+                <a href="https://github.com/tonlee-nothingness/tonlee-nothingness.github.io/blob/main/Screen%20Recording%202026-02-26%20123059.mp4" target="_blank" class="link-btn">Beginnings &rarr;</a>
+            </div>
+        </section>
+
+        <section class="shutdown fade-in">
+            <p class="date">March 29, 2023</p>
+            <h2>The Shutdown Process: Determinism &amp; Completeness</h2>
+            <p class="epigraph"><em>"You cease to exist the day you understand the truth"</em></p>
+
+            <p class="desc">An inquiry into the nature of determinism, which arises from the fact of complete predictability and complete understanding. By challenging the "myth of isolation," this research explores how a completely self-aware observer realizes a deterministic shutdown.</p>
+
+            <h3 class="section-label">Core Concepts</h3>
+            <ul class="core-list">
+                <li><strong>Deterministic Shutdown:</strong> A process where a machine is shut down exactly at a desired time, neither before nor after.</li>
+                <li><strong>Information Completeness:</strong> To perform a deterministic shutdown, one must possess complete information regarding all variables of the machine.</li>
+                <li><strong>The Myth of Isolation:</strong> Systems cannot be truly isolated; assuming isolation creates artificial pseudo-boundaries that lead to uncertainty.</li>
+                <li><strong>Nature as Observer:</strong> Nature interacts within itself as a connected system, and the observer is merely a sub-part of this un-isolatable whole.</li>
+                <li><strong>Natural Solutions:</strong> Nature does not solve problems but follows the path of the solution itself.</li>
+            </ul>
+            <br>
+            <a href="shutdown-process.html" class="link-btn">View Full Essays &rarr;</a>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Dhruv Sharma</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>
